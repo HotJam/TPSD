@@ -48,7 +48,7 @@ public class Servidor implements Serializable {
         //this.codigoReserva = s.
         this.descricao = s.getNome();
         this.nUsers = s.getNUsers();
-        Servidor.isfree = s.getAvailabitity();
+        Servidor.isfree = s.getIsAvailable();
         this.server_lock = s.getLock();
         this.preco_nonimal = s.getPreco();
     }
@@ -98,7 +98,11 @@ public class Servidor implements Serializable {
     }
     
     public long getID(){
-        return this.id;
+        long r;
+        this.server_lock.lock();
+        r=this.id;
+        this.server_lock.unlock();
+        return r;
     }
     
     public String getNome(){
@@ -111,7 +115,7 @@ public class Servidor implements Serializable {
         this.server_lock.unlock();
     }
    
-    public boolean getAvailabitity() {
+    public boolean getIsAvailable() {
         boolean b = false;
         this.server_lock.lock();
         b = Servidor.isfree;

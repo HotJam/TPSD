@@ -144,9 +144,9 @@ public class Cliente {
         }
     }
    
-    public String[] reservarServidor(long ID, String servername, String username) throws myException{
+    public String[] reservarServidor(long ID, String username, long codigo) throws myException{
         String sResposta = "";
-        out.println(3 + "," + ID + "," + servername + "," + username);
+        out.println(3 + "," + ID + "," + username + "," + codigo);
         try {
             sResposta = in.readLine();
         } catch (IOException ex) {

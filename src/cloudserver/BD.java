@@ -180,19 +180,16 @@ public class BD extends HashMap<String, Utilizador> implements Serializable {
  
     
     public static long getNrReserva(){
-        long r = 0;
-        laux.lock();
-        r = BD.codigoReserva;     
-        laux.unlock();
-        return r;
+       long r;
+       BD.laux.lock();
+       r=BD.codigoReserva;
+       BD.laux.unlock();
+       return r;
     }
     
     public static long incNrReserva(){
-        long r = 0;
-        laux.lock();
-        r = (BD.getNrReserva()+1);
-        laux.unlock();
-        return r;
+        BD.codigoReserva++;
+        return BD.codigoReserva;
     }
     
     
@@ -380,10 +377,13 @@ public class BD extends HashMap<String, Utilizador> implements Serializable {
     public static HashMap<String, Servidor> getServidores(){
         HashMap<String, Servidor> aux = new HashMap<String,Servidor>();
         BD.laux.lock();
-        for(Servidor a: BD.serverList.values()){
-            aux.put(a.getNome(), a);
+        try {
+            for(Servidor a: BD.serverList.values()){
+                aux.put(a.getNome(), a);
+            }
+        } finally {
+            BD.laux.unlock();
         }
-        BD.laux.unlock();
         return aux;
     }
     

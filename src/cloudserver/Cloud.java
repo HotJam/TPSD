@@ -40,21 +40,50 @@ public class Cloud implements Serializable{
         Cloud.reservas.put(codigo, s);
     }
     
-     
-    public boolean reservarServidor(long id, String servername, String username) throws ServerIsFullException, InterruptedException{
+    public boolean containsID(String servername){
+        for(Servidor s: Cloud.reservas.values()){
+            if(s.getNome().equals(servername)){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public Servidor getServer(String servername){
+        Servidor v = null;
+        for(Servidor s: Cloud.reservas.values()){
+            if(s.getNome().equals(servername)){
+                v = s;
+            }
+        }
+        return v;
+    }
+    
+    
+    public boolean reservarServidor(long id, String username) throws ServerIsFullException, InterruptedException{
         l.lock();
         Servidor v = null;
         Utilizador u = null;
         boolean r = false;
-        double custo = 0;      
-        boolean condition1 = Cloud.reservas.containsKey(servername);
+        double custo = 0;    
+        long codigo = 0;
+        
+        String servername = " ";
+        for(Servidor s: BD.getServidores().values()){
+            if (s.getID() == id){
+                servername = s.getNome();
+            }
+        }
+                
+        boolean condition1 = containsID(servername);
         boolean condition2 = Cloud.utilizadoresQueue.containsKey(username);
+        
         if(condition1 && condition2){
             try{
-                v = Cloud.reservas.get(servername);
-                if(v.getAvailabitity()==true){
+                v = getServer(servername);
+                if(v.getIsAvailable()==true){
                     u = Cloud.utilizadoresQueue.get(username);                    
-                    long codigo = BD.getNrReserva()+1;
+                    codigo = BD.incNrReserva();
                     v.adicionarUser();
                     v.setAvailability(false);
                     u.getReservas().put(codigo, v.clone());
@@ -81,8 +110,7 @@ public class Cloud implements Serializable{
                 if(condition2){
                         v = BD.getServidores().get(servername);   
                         u = Cloud.utilizadoresQueue.get(username);
-                        long codigo = BD.getNrReserva()+1;
-                        //BD.incNrReserva();
+                        codigo = BD.incNrReserva();
                         v.adicionarUser();
                         v.setAvailability(false);
                         u.getReservas().put(codigo, v.clone());
@@ -128,18 +156,6 @@ public class Cloud implements Serializable{
         
     }    
     
-    
-    public static Servidor getServer(String servername){
-        Servidor v = null;
-        Cloud.aux.lock();
-        for(Servidor a: Cloud.reservas.values()){
-            if(a.getNome()==servername){
-                v = a.clone();
-            }
-        }
-        Cloud.aux.unlock();
-        return v;
-    }
     
     public HashMap<Long,Servidor> getReservas(){
         return Cloud.reservas;

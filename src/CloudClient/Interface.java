@@ -146,52 +146,51 @@ public class Interface implements Serializable{
     protected void normalServer() throws myException, InterruptedException{
         String[] resposta = null;
         long id = 0;
-        String username = null;
-        String servername = null;
+        //String username = null;
+        //String servername = null;
+        long codigo = 0;
         
         System.out.print("Insira o ID do Servidor: \n");
         System.out.print("ID: ");
         id = Input.lerInt();
         
-        System.out.print("Insira o nome do Servidor: \n");
+    /*    System.out.print("Insira o nome do Servidor: \n");
         System.out.print("Descrição: ");
         servername = Input.lerString();
         
-        System.out.print("Insira o seu nome de Utilizador: \n");
+    /*    System.out.print("Insira o seu nome de Utilizador: \n");
         System.out.print("username: ");
-        username = Input.lerString();
+        username = Input.lerString();*/
         
         
         System.out.println("A aguardar...");
         
         
         try {
-            //boolean condition1 = getServer(codigodereserva).getAvailabitity();
-            resposta = c.reservarServidor(id, servername, username);
-            boolean condition2 = BD.getServidores().get(servername).getAvailabitity();
-            sleep(3000);
+           
+            resposta = c.reservarServidor(id, user, codigo);
+            boolean condition2 = false;
+            long codReserva = 0;
             
-            if (resposta != null){
+            if(resposta != null){
+                sleep(3000);
+                condition2 = resposta[1].equals("Servidor Atribuido");
+                codReserva = Long.parseLong(resposta[2]);
                 
-                if(condition2 == true){
-                    long codigo = BD.incNrReserva();
+                  if(condition2 == true){
                     System.out.print("_______________________________\n");
                     System.out.print("\nServidor Atribuído!!\n");
-                    System.out.print("Código de Reserva: " + codigo + "\n" + "Servidor: " + id + "\n");
+                    System.out.print("Código de Reserva: " + codReserva + "\n" + "Servidor: " + id + "\n");
                     System.out.print("_______________________________\n");
                     menuPrincipal();
                 }
-                else {
+            }           
+            else {
+                    sleep(2000);
                     System.out.print("_______________________________\n");
                     System.out.print("\nServidor Ocupado ou Servidor não Existe!\n");
                     System.out.print("_______________________________\n");
                     menuPrincipal();
-                }
-
-            }        
-            else {
-                System.err.println("Não foi possivel efetuar a operção! > Tente novamente!");
-                menuPrincipal();
             }
         }
         catch (InterruptedException e){

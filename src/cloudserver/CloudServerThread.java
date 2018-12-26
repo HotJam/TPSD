@@ -122,16 +122,23 @@ public class CloudServerThread extends Thread{
     
     private void reservarServer(String[] msg) throws ServerIsFullException, InterruptedException{
         //PROTOCOLO:
-        //3,id,servername,username
+        //3,id,username
         
         long ID  = Long.parseLong(msg[1]);
-        String servername = msg[2];
-        String username = msg[3];
-        //long codigo = Long.parseLong(msg[4]);
-        boolean cond = cloud.reservarServidor(ID, servername, username);
+        String username = msg[2];
+        
+        String servername = " ";
+        for (Servidor s: BD.getServidores().values()){
+            if(s.getID() == ID){
+                servername = s.getNome();
+            }
+        }
+        
+        boolean cond = cloud.reservarServidor(ID, username);
+        long codigo = bd.getNrReserva();
         
         if(cond == true){
-            cs.sendMessage("3,Servidor Atribuido");
+            cs.sendMessage("3,Servidor Atribuido," + codigo);
         }
         else if (!BD.getServidores().containsKey(servername)){
             cs.sendMessage("3,Servidor Não Existe");
