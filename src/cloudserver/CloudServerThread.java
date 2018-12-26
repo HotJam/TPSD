@@ -28,20 +28,17 @@ public class CloudServerThread extends Thread{
         this.cloud = cloud;
     }
 
-    public void run() {
+    public void run(){
         try {
             while ((msg = cs.readMessage()) != null) {
-                try {
-                    databaseConnector(msg);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(CloudServerThread.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                databaseConnector(msg);
             }
         } catch (IOException e) {
             System.err.println(e.toString());
         } catch (ServerIsFullException ex) {
             cs.sendMessage("KO");
         }
+        catch ()
     }
     
 

@@ -1,4 +1,4 @@
-package cloudserver;
+package CloudClient;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -7,6 +7,7 @@ package cloudserver;
  */
 
 
+import cloudserver.BD;
 import java.io.Serializable;
 import static java.lang.Thread.sleep;
 
