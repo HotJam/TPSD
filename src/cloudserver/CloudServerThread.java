@@ -38,7 +38,9 @@ public class CloudServerThread extends Thread{
         } catch (ServerIsFullException ex) {
             cs.sendMessage("KO");
         }
-        catch ()
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
     
 
