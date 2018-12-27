@@ -62,8 +62,13 @@ public class Cliente {
                 resposta = clienteReservarServidor(str[1]);
                 break;
             case '4':
-                String print = str[2];
-                resposta = clienteConsultarConta(print);
+                resposta = clienteDepositar(str[1]);
+                break;
+            case '5':
+                resposta = clienteConsultarConta(str[1]);
+                break;
+            case '6':
+                resposta = clienteListarServidores(str[1]);
                 break;
             case '8':
                 resposta = clienteLogout(str[1]);
@@ -194,13 +199,13 @@ public class Cliente {
         switch (mensagem) {
             case "ok":
                 resposta = true;
-                System.out.print(mensagem);
+                out.print(mensagem);
                 break;
             case "Utilizador não existe!":
                 throw new myException(mensagem);
             case "Não tem valores em dívida":
                 resposta = true;
-                System.out.print(mensagem);
+                out.print(mensagem);
                 break;
             default:
                 throw new myException("Não foi possível efectuar a operação. Tente Novamente");
@@ -208,9 +213,10 @@ public class Cliente {
         return resposta;   
     }
     
+    
     public String[] consultarConta(String username) throws myException{
         String sResposta = "";
-        out.print(4 + "," + username);
+        out.print(5 + "," + username);
         try{
             sResposta = in.readLine();
         }
@@ -225,5 +231,71 @@ public class Cliente {
             }
         }
     }
+    
+    public String[] depositar(double valor, String username) throws IOException, myException{
+        
+        String sResposta = "";
+        out.print(4 + "," + valor + "," + username);
+        try{
+            sResposta = in.readLine();
+        }
+        catch (IOException e){
+            throw new myException("\nNão foi possível fazer operação!");
+        }
+        finally {
+            if (response(sResposta)){
+                return sResposta.split(",");
+            }
+            else {
+                return null;
+            }
+        }
+    }
 
+    private boolean clienteDepositar(String mensagem) throws myException {
+        
+        boolean resposta = false;
+        switch (mensagem) {
+            case "ok":
+                resposta = true;
+                break;
+            case "User Não Existe":
+                throw new myException(mensagem);
+            default:
+                throw new myException("Não foi possível efectuar a operação. Tente Novamente");
+        }
+        return resposta;  
+        
+    }
+    
+    public String[] listarServidoresCliente() throws myException{
+        
+        String sResposta = "";
+        out.print(6 + ", ");
+        try{
+            sResposta = in.readLine();
+        }
+        catch (IOException e){
+            throw new myException("\nNão foi possível fazer operação!");
+        }
+        finally {
+            if (response(sResposta)){
+                return sResposta.split(",");
+            }
+            else {
+                return null;
+            }
+        }
+        
+    }
+    
+    
+    private boolean clienteListarServidores(String mensagem) throws myException{
+        if(mensagem != null){
+            out.print(mensagem);
+            return true;
+        } 
+        else return false;
+    }
+    
 }   

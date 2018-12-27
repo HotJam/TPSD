@@ -81,14 +81,14 @@ public class Cloud implements Serializable{
         if(condition1 && condition2){
             try{
                 v = getServer(servername);
-                if(v.getIsAvailable()==true){
+                if(v.getIsAvailable() && (v.getPreco() <= u.getSaldo())){
                     u = Cloud.utilizadoresQueue.get(username);                    
                     codigo = BD.incNrReserva();
                     v.adicionarUser();
                     v.setAvailability(false);
                     u.getReservas().put(codigo, v.clone());
                     custo = v.getPreco();
-                    u.incDebt(custo);
+                    u.levantar(custo);
                     r=true;
                 }
                 else {
@@ -107,7 +107,7 @@ public class Cloud implements Serializable{
         }
         else {
             try {
-                if(condition2){
+                if(condition2 && (v.getPreco() <= u.getSaldo())){
                         v = BD.getServidores().get(servername);   
                         u = Cloud.utilizadoresQueue.get(username);
                         codigo = BD.incNrReserva();
@@ -115,7 +115,7 @@ public class Cloud implements Serializable{
                         v.setAvailability(false);
                         u.getReservas().put(codigo, v.clone());
                         custo = v.getPreco();
-                        u.incDebt(custo);
+                        u.levantar(custo);
                         Cloud.reservas.put(codigo, v.clone());
                         r=true;
                 }
@@ -182,6 +182,29 @@ public class Cloud implements Serializable{
     }
     
     //funcionalidades da cloud..
+
+    public synchronized boolean depositar(double valor, String username) {
+        Utilizador u = null;
+        boolean r = false;
+        boolean cond = Cloud.utilizadoresQueue.containsKey(username);
+        
+        if(cond){
+            u = Cloud.utilizadoresQueue.get(username);
+            u.depositar(valor);
+            r=true;
+        }
+        return false;
+    }
     
+    
+    public synchronized String listarServidores(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("\nLista de Servidores a custo fixo: \n" + "\n");
+        
+        for(Servidor a: BD.getServidores().values()){
+           sb.append(a.toString());
+        }
+        return sb.toString();
+    }
     
 }

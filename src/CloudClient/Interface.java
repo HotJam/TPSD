@@ -8,6 +8,7 @@ package CloudClient;
 
 
 import cloudserver.BD;
+import java.io.IOException;
 import java.io.Serializable;
 import static java.lang.Thread.sleep;
 
@@ -17,7 +18,7 @@ import static java.lang.Thread.sleep;
  */
 public class Interface implements Serializable{
     
-    public Menu menuLogin, menuMain, menuLeilao, menuConsulta;
+    public Menu menuLogin, menuMain, menuLeilao, menuConsulta, menuU;
     private String user;
     private Cliente c;
     
@@ -25,7 +26,7 @@ public class Interface implements Serializable{
         this.c = c;
     }
 
-    protected void start() throws myException, InterruptedException {
+    protected void start() throws myException, InterruptedException, IOException {
         carregarMenus();
 
         do {
@@ -41,19 +42,9 @@ public class Interface implements Serializable{
         } while (menuLogin.getOpcao() != 0);
     }
     
-    protected void menuC(){
-        do {
-            menuConsulta.executa();
-            switch (menuConsulta.getOpcao()) {
-                case 1:
-                    pagar();
-                    break;
-                    
-            }
-        } while (menuConsulta.getOpcao() != 0);
-    }
     
-    protected void menuPrincipal() throws myException, InterruptedException{
+    
+    protected void menuPrincipal() throws myException, InterruptedException, IOException{
         do {
             try {
                 menuMain.executa();
@@ -67,9 +58,7 @@ public class Interface implements Serializable{
                     case 3:
                         freeServer();
                         break;
-                    case 4:
-                        consultAccount();
-                        break;
+                   
                 }
             } catch (myException s) {
                 System.err.println(s.getMessage());
@@ -81,7 +70,7 @@ public class Interface implements Serializable{
     }
     
     
-     protected void login() throws myException, InterruptedException {
+     protected void login() throws myException, InterruptedException, IOException {
 
         boolean login = false;
         String pass;
@@ -97,13 +86,13 @@ public class Interface implements Serializable{
         }
         if (login) {
             System.out.println("\n Login realizado com sucesso!");
-            menuPrincipal();
+            menuU();
         }
     }
 
     
 
-    protected void registar() throws myException, InterruptedException {
+    protected void registar() throws myException, InterruptedException, IOException {
 
         String pass;
         boolean registar = false;
@@ -125,25 +114,43 @@ public class Interface implements Serializable{
         }
     }
     
+    protected void menuU() throws myException, InterruptedException, IOException{
+        do {
+            menuU.executa();
+            switch (menuU.getOpcao()) {
+                case 1:
+                    depositar();
+                    break;
+                case 2:
+                    listarServidores();
+                    break;
+                case 3:
+                    consultAccount();
+                    break;
+            }
+        } while (menuLogin.getOpcao() != 0);
+    }
     
     protected void carregarMenus() {
 
         String[] menuLogReg = {"Login", "Registar"};
 
+        String[] menuUtilizador = {"Depositar","Listar Servidores", "Consultar Conta"};
+        
         String[] main = {"Reservar Servidor", "Listar Servidores Leilão", "Libertar Servidor", "Consultar Dívidas"};
         
         String[] menuL = {"Licitar Servidor"};
         
-        String[] menuC = {"Pagar"};
-       
+              
         menuLogin = new Menu(menuLogReg);
         menuMain = new Menu(main);
         menuLeilao = new Menu(menuL);
-        menuConsulta = new Menu(menuC);
+        menuU = new Menu(menuUtilizador);
+       // menuConsulta = new Menu(menuC);
        
     }
     
-    protected void normalServer() throws myException, InterruptedException{
+    protected void normalServer() throws myException, InterruptedException, IOException{
         String[] resposta = null;
         long id = 0;
         //String username = null;
@@ -186,12 +193,19 @@ public class Interface implements Serializable{
                 }
             }           
             else {
+                if(0<=id && id <20){
                     sleep(2000);
                     System.out.print("_______________________________\n");
-                    System.out.print("\nServidor Ocupado ou Servidor não Existe!\n");
+                    System.out.print("\nServidor Ocupado ou Saldo Insuficiente\n");
                     System.out.print("_______________________________\n");
                     menuPrincipal();
+                }
+                else {
+                    System.err.print("Servidor Não Existe!\n");
+                    menuPrincipal();
+                }
             }
+            
         }
         catch (InterruptedException e){
             System.err.println(e.getMessage());
@@ -200,29 +214,23 @@ public class Interface implements Serializable{
                 
     }
     
-    protected void consultAccount() throws myException, InterruptedException{
+    protected void consultAccount() throws myException, InterruptedException, IOException{
        String[] resposta = null;
        
-       String username = "";
-       
-       System.out.print("Insira o seu nome de utilizador: \n");
-       System.out.print("Username: ");
-       username = Input.lerString();
        
        System.out.print("Aguarde..\n");
        
        
        try{
-            resposta = c.consultarConta(username); 
+            resposta = c.consultarConta(user); 
             sleep(2000);
 
             if (resposta == null){
-                System.out.print("Não foi possível fazer a operação! Tente novamente");
+                System.err.print("Não foi possível fazer a operação! Tente novamente");
                 menuPrincipal();
             }
-            else{ 
-                menuC();
-            }
+            else menuU();
+            
        }
        catch (InterruptedException | myException e){
            e.printStackTrace();
@@ -230,8 +238,42 @@ public class Interface implements Serializable{
     }
     
     
-    protected void pagar(){
+    protected void depositar() throws IOException, myException, InterruptedException{
+     
+        String[] resposta = null;
+        double saldo = 0;
         
+        System.out.print("Insira o valor que deseja depositar\n");
+        System.out.print("valor: ");
+        saldo = Input.lerDouble();
+        
+        System.out.print("Aguarde..\n");
+        
+        try {
+            resposta = c.depositar(saldo, user);
+            sleep(1000);
+            
+            if(resposta != null){
+                System.out.print("_______________________________\n");
+                System.out.print("\nValor depositado com sucesso!\n");
+                System.out.print("_______________________________\n");
+                menuU();
+            }
+                       
+        }
+        catch (IOException | myException | InterruptedException e){
+            e.printStackTrace();
+        }
+        
+    }
+    
+    protected void listarServidores() throws myException, InterruptedException, IOException{
+        
+        String[] msg = {" "}; 
+        
+        msg = c.listarServidoresCliente();
+        
+        menuPrincipal();
     }
     
     protected void auctionServer() throws myException{

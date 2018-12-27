@@ -19,7 +19,7 @@ public class Utilizador implements Serializable {
  
     private String username;
     private String pass;
-    private double debt;
+    private double saldo;
     private HashMap<Long, Servidor> reservas;
     private boolean login;
     
@@ -29,7 +29,7 @@ public class Utilizador implements Serializable {
     public Utilizador(String u, String p) {
         this.username = u;
         this.pass = p;
-        this.debt=0;
+        this.saldo=0;
         this.reservas = new HashMap<>();
         this.login=false;
     }
@@ -37,7 +37,7 @@ public class Utilizador implements Serializable {
     public Utilizador(){
         this.username = "";
         this.pass = "";
-        this.debt=0;
+        this.saldo=0;
         this.reservas = new HashMap<>();
         this.login=false;
     }
@@ -52,7 +52,7 @@ public class Utilizador implements Serializable {
     public Utilizador(Utilizador p) {
         this.username = p.getUser();
         this.pass = p.getPass();
-        this.debt = p.getDebt();
+        this.saldo = p.getSaldo();
         this.reservas = p.getReservas();
         this.login = p.getLogin();
     }
@@ -68,8 +68,8 @@ public class Utilizador implements Serializable {
     public boolean getLogin(){
         return login;
     }
-    public double getDebt(){
-        return this.debt;
+    public synchronized double getSaldo(){
+        return this.saldo;
     }
     
     public void login(){
@@ -90,8 +90,12 @@ public class Utilizador implements Serializable {
         l.unlock();
     }
     
-    public void incDebt(double preco){
-        this.debt+=preco;
+    public synchronized void depositar(double valor){
+        this.saldo+=valor;
+    }
+    
+    public synchronized void levantar(double valor){
+        this.saldo-=valor;
     }
     
     public void removeReserva(long codigo){
@@ -111,7 +115,7 @@ public class Utilizador implements Serializable {
     @Override
     public String toString() {
         printReservas();
-        return ("Utilizador{" + " nome: " + this.getUser() + " Valor em dívida: " + this.debt + "}\n");             
+        return ("Utilizador{" + " nome: " + this.getUser() + " Valor em dívida: " + this.saldo + "}\n");             
                 
     }
     

@@ -96,6 +96,8 @@ public class BD extends HashMap<String, Utilizador> implements Serializable {
         }
     }
     
+    
+    
     public Boolean login(String username, String password) {
         boolean flag = false;
         l.lock();
@@ -350,6 +352,19 @@ public class BD extends HashMap<String, Utilizador> implements Serializable {
         return b;
     }
     
+    /*
+    public static boolean contains(String key){
+        BD.laux.lock();
+        boolean b = false;
+        for(String s: this.keySet()){
+            if (s.equals(key)){
+                b=true;
+            }
+        }
+        BD.laux.unlock();
+        return b;
+    }*/
+    
     @Override
     public Utilizador get(Object key) {
         l.lock();
@@ -386,6 +401,7 @@ public class BD extends HashMap<String, Utilizador> implements Serializable {
         }
         return aux;
     }
+    
     
   /*  public static HashMap<String, ServidorLeilão> getAuctions(){
         HashMap<String, ServidorLeilão> aux = new HashMap<String,ServidorLeilão>();

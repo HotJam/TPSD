@@ -66,6 +66,12 @@ public class CloudServerThread extends Thread{
             case '4':
                 //utilizador consulta a sua conta e dividas
                 consultarConta(msg);
+            case '5':
+                //utilizador deposita saldo na sua conta
+                depositar(msg);
+            case '6':
+                //utilizador lista servidores
+                listarServidores();
             case '9':
                 //logout
                 logout(msg);
@@ -119,6 +125,32 @@ public class CloudServerThread extends Thread{
             cs.sendMessage("KO");
         }
     }
+    
+    private void depositar(String[] msg){
+        //PROTOCOLO:
+        //4,saldo,username
+        double valor = Double.parseDouble(msg[1]);
+        String username = msg[2];
+        
+        boolean cond = cloud.depositar(valor, username);
+        
+        if(cond){
+            cs.sendMessage("4,ok");
+        }
+        else {
+            cs.sendMessage("4,User Não Existe");
+        }
+        
+    }
+    
+    private void listarServidores(){
+        //PROTOCOLO:
+        
+        String lista = cloud.listarServidores();
+        
+        cs.sendMessage("6," + lista);
+    }
+            
     
     private void reservarServer(String[] msg) throws ServerIsFullException, InterruptedException{
         //PROTOCOLO:
