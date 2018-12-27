@@ -31,14 +31,14 @@ public class CloudServer {
                 try {
                     load("bd");
                     System.out.println("Base de dados inicializada com sucesso.");
-                    baseDados.listServer();
+                    //baseDados.listServer();
                 } catch (IOException | ClassNotFoundException ex) {
                     System.err.println("Erro a ler bd.");
                     baseDados.loadSample();
                     
                     System.out.println("Nova base de dados inicializada.");
                     
-                    baseDados.listServer();
+                    //baseDados.listServer();
                 }   break;
             case 1:
                 try {
@@ -50,12 +50,12 @@ public class CloudServer {
                 try {
                     load("bd");
                     System.out.println("Base de dados inicializada com sucesso.");
-                    baseDados.listServer();
+                    //baseDados.listServer();
                 } catch (IOException | ClassNotFoundException ex) {
                     System.err.println("Erro a ler bd.");
                     baseDados.loadSample();
                     System.out.println("Nova base de dados inicializada.");
-                    baseDados.listServer();
+                    //baseDados.listServer();
                 }   break;
             default:
                 try {
@@ -67,12 +67,12 @@ public class CloudServer {
                 baseDados = new BD();//nova BD vazia
                 try {
                     load(bdFilePath);
-                    baseDados.listServer();
+                    //baseDados.listServer();
                 } catch (IOException | ClassNotFoundException ex) {
                     System.err.println("Erro a ler bd.");
                     baseDados.loadSample();
                     System.out.println("Nova base de dados inicializada.");
-                    baseDados.listServer();
+                    //baseDados.listServer();
                 }   break;
         }
 
