@@ -40,11 +40,13 @@ public class CloudServerThread extends Thread{
         }
         catch (InterruptedException e) {
             e.printStackTrace();
+        } catch (ServerIsEmptyException ex) {
+            cs.sendMessage("KO");
         }
     }
     
 
-    public void databaseConnector(String mensagem) throws IOException, ServerIsFullException, InterruptedException{
+    public void databaseConnector(String mensagem) throws IOException, ServerIsFullException, InterruptedException, ServerIsEmptyException{
         //partir mensagem em campos:
         String[] msg = mySplit(mensagem);
         //ver codigo da mensagem:
@@ -74,6 +76,10 @@ public class CloudServerThread extends Thread{
             case '6':
                 //utilizador lista servidores
                 listarServidores();
+                break;
+            case '7':
+                //utilizador liberta a reserva de um servidor
+                libertarServidor(msg);
                 break;
             case '9':
                 //logout
@@ -198,6 +204,20 @@ public class CloudServerThread extends Thread{
             cs.sendMessage("4,ok," + condition);
         }
     }   
+    
+    private void libertarServidor(String[] msg) throws ServerIsEmptyException{
+        //PROTOCOLO:
+        //7,codigo de reserva, utilizador
+        long codigo = Long.parseLong(msg[1]);
+        String username = msg[2];
+        boolean cond = false;
+        if(cloud.libertarServidor(codigo, username)){
+            cs.sendMessage("7,ok");
+        }
+        else {
+            cs.sendMessage("7,código não existe");
+        }
+    }
     
     
     private void logout(String[] msg) {

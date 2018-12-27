@@ -70,6 +70,9 @@ public class Cliente {
                 break;
             case '6':
                 resposta = clienteListarServidores(str[1]);
+                break;               
+            case '7':
+                resposta = clienteLibertarServidor(str[1]);
                 break;
             case '8':
                 resposta = clienteLogout(str[1]);
@@ -292,6 +295,39 @@ public class Cliente {
             return true;
         } 
         else return false;
+    }
+    
+    public String[] libertarServidor(long codigodereserva, String username) throws IOException, myException{
+        String sResposta = "";
+        out.println(7 + "," + codigodereserva + "," + username);
+        try {
+            sResposta = in.readLine();
+        }
+        catch (IOException e){
+            throw new myException("\nNão foi possível efetuar a operação");
+        }
+        finally{
+            if(response(sResposta)){
+                return sResposta.split(",");
+            }
+            else return null;
+        }
+    }
+    
+    
+    private boolean clienteLibertarServidor(String mensagem) throws myException {
+        boolean resposta = false;
+        switch (mensagem){
+            case "ok":
+                resposta = true;
+                break;
+            case "código não existe":
+                resposta = false;
+                break;
+            default:
+                throw new myException("Não foi possível efectuar a operação. Tente Novamente");
+        }
+        return resposta;
     }
     
 }   

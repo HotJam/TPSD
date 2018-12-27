@@ -161,23 +161,13 @@ public class Interface implements Serializable{
     protected void normalServer() throws myException, InterruptedException, IOException{
         String[] resposta = null;
         long id = 0;
-        //String username = null;
-        //String servername = null;
         long codigo = 0;
         
         System.out.print("Insira o ID do Servidor: \n");
         System.out.print("ID: ");
         id = Input.lerInt();
         
-    /*    System.out.print("Insira o nome do Servidor: \n");
-        System.out.print("Descrição: ");
-        servername = Input.lerString();
-        
-    /*    System.out.print("Insira o seu nome de Utilizador: \n");
-        System.out.print("username: ");
-        username = Input.lerString();*/
-        
-        
+    
         System.out.println("A aguardar...");
         
         
@@ -187,7 +177,7 @@ public class Interface implements Serializable{
             boolean condition2 = false;
             long codReserva = 0;
             
-            if(resposta != null){
+            if(resposta != null && (id>=0 && id<20)){
                 sleep(3000);
                 condition2 = resposta[1].equals("Servidor Atribuido");
                 codReserva = Long.parseLong(resposta[2]);
@@ -204,10 +194,11 @@ public class Interface implements Serializable{
                 if(0<=id && id <20){
                     sleep(2000);
                     System.out.print("_______________________________\n");
-                    System.out.print("\nServidor Ocupado ou Saldo Insuficiente\n");
+                    System.out.print("\nServidor Ocupado\nou saldo insuficiente!\n");
                     System.out.print("_______________________________\n");
                     menuPrincipal();
                 }
+                
                 else {
                     System.err.print("Servidor Não Existe!\n");
                     menuPrincipal();
@@ -294,13 +285,40 @@ public class Interface implements Serializable{
         }
     }
     
+    
+    
+    protected void freeServer() throws myException, IOException, InterruptedException{
+        
+        String[] msg = {" "};
+        
+        System.out.print("Insira o código de reserva\n");
+        System.out.print("código: ");
+        long codigo = Long.parseLong(Input.lerString());
+        
+        try {
+            msg = c.libertarServidor(codigo, user);
+            if(msg != null){
+                System.out.print("_______________________________\n");
+                System.out.print("\nServidor foi libertado com sucesso !\n");
+                System.out.print("_______________________________\n");
+                menuPrincipal();
+            }
+            else {
+                System.out.print("_______________________________\n");
+                System.out.print("\nNão foi possível libertar servidor !\n");
+                System.out.print("Código de reserva inexistente \nou não tem servidores reservados neste momento! \n");
+                System.out.print("_______________________________\n");
+                menuPrincipal();
+            }
+        }
+        catch (myException | InterruptedException | IOException e){
+            e.printStackTrace();
+        }
+                
+    }
+    
     protected void auctionServer() throws myException{
         
     }
-    
-    protected void freeServer() throws myException{
-        
-    }
-    
    
 }

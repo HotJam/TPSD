@@ -8,6 +8,7 @@ package cloudserver;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -18,7 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Cloud implements Serializable{
     
     
-    private static HashMap<Long,Servidor> reservas; 
+    private static HashMap<Long,Servidor> reservas;                 //codigo de reserva, SERVIDOR
     private static HashMap<String, Utilizador> utilizadoresQueue;
     private ReentrantLock l;
     private static ReentrantLock aux;
@@ -131,6 +132,45 @@ public class Cloud implements Serializable{
             finally{
                 l.unlock();
             }
+        }
+        return r; 
+    }
+    
+    public boolean libertarServidor(long reserva,String username) throws ServerIsEmptyException{
+        l.lock();
+        Servidor v = null;
+        Utilizador u = null;
+        boolean r = false;
+                    
+        boolean condition1 = Cloud.reservas.containsKey(reserva);
+        boolean condition2 = Cloud.utilizadoresQueue.containsKey(username);
+        
+        if(condition1 && condition2){
+            try{
+                v = Cloud.reservas.get(reserva);
+                u = Cloud.utilizadoresQueue.get(username);
+                Servidor aux = BD.getServidores().get(v.getNome());
+                aux.removeUser();
+                aux.setAvailability(true);
+                
+                u.removeReserva(reserva);
+                Cloud.reservas.remove(reserva);
+                r=true;
+            }
+            catch (ServerIsEmptyException sif){
+                System.out.print(sif.getMessage());
+                sif.printStackTrace();
+            }
+            finally{
+                l.unlock();
+            }
+            
+        }
+        else {
+            if(!condition1){
+                return false;
+            }
+            l.unlock();
         }
         return r; 
     }

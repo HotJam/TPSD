@@ -20,7 +20,7 @@ public class Utilizador implements Serializable {
     private String username;
     private String pass;
     private double saldo;
-    private HashMap<Long, Servidor> reservas;
+    private HashMap<Long, Servidor> reservas; //codigo, Servidor
     private boolean login;
     
     private ReentrantLock l;
@@ -98,10 +98,10 @@ public class Utilizador implements Serializable {
         this.saldo-=valor;
     }
     
-    public void removeReserva(long codigo){
-        l.lock();
+    public synchronized void removeReserva(long codigo){
+        
         this.reservas.remove(codigo); 
-        l.unlock();
+        
     }
     
     public void printReservas(){
@@ -116,20 +116,20 @@ public class Utilizador implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         
-        sb.append("Lista de reservas do Utilizador: \n \n");
         if(reservas.isEmpty()){
-            sb.append("Ainda não tem reservas na sua conta!\n");
+            sb.append("\nNão tem reservas activas na sua conta!\n");
         }
         else {
+            sb.append("\nLista de reservas do Utilizador: \n \n");
             for(Servidor s: reservas.values()){
                 for(Long c: reservas.keySet()){ 
                     sb.append(s.toString());
-                    sb.append("\n Código de reserva: " + c + "\n");
+                    sb.append("Código de reserva: " + c + "\n\n");
                 }
             }
         }
         
-        sb.append("Utilizador{ " + this.username + "\nSaldo Disponível: " + this.saldo + "\n}");
+        sb.append("Utilizador{ \n" + this.username + "\nSaldo Disponível: " + this.saldo + " €\n}");
         return sb.toString();
     }
     
