@@ -199,13 +199,13 @@ public class Cliente {
         switch (mensagem) {
             case "ok":
                 resposta = true;
-                out.print(mensagem);
+                //out.print(mensagem);
                 break;
             case "Utilizador não existe!":
                 throw new myException(mensagem);
             case "Não tem valores em dívida":
                 resposta = true;
-                out.print(mensagem);
+                //out.print(mensagem);
                 break;
             default:
                 throw new myException("Não foi possível efectuar a operação. Tente Novamente");
@@ -216,7 +216,7 @@ public class Cliente {
     
     public String[] consultarConta(String username) throws myException{
         String sResposta = "";
-        out.print(5 + "," + username);
+        out.println(5 + "," + username);
         try{
             sResposta = in.readLine();
         }
@@ -235,7 +235,7 @@ public class Cliente {
     public String[] depositar(double valor, String username) throws IOException, myException{
         
         String sResposta = "";
-        out.print(4 + "," + valor + "," + username);
+        out.println(4 + "," + valor + "," + username);
         try{
             sResposta = in.readLine();
         }
@@ -271,7 +271,8 @@ public class Cliente {
     public String[] listarServidoresCliente() throws myException{
         
         String sResposta = "";
-        out.print(6 + ", ");
+        out.println(6 + ", ");
+        out.flush();
         try{
             sResposta = in.readLine();
         }
@@ -292,7 +293,7 @@ public class Cliente {
     
     private boolean clienteListarServidores(String mensagem) throws myException{
         if(mensagem != null){
-            out.print(mensagem);
+            System.out.print(mensagem.replace('#','\n'));
             return true;
         } 
         else return false;

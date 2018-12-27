@@ -199,10 +199,10 @@ public class Cloud implements Serializable{
     
     public synchronized String listarServidores(){
         StringBuilder sb = new StringBuilder();
-        sb.append("\nLista de Servidores a custo fixo: \n" + "\n");
+        sb.append("##Lista de Servidores a custo fixo:#");
         
         for(Servidor a: BD.getServidores().values()){
-           sb.append(a.toString());
+           sb.append(a.toString().replace('\n','#')+"#");
         }
         return sb.toString();
     }

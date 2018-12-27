@@ -34,5 +34,6 @@ public class Connect {
     
     public void sendMessage(String msg){
         out.println(msg);
+        out.flush();
     }
 }
