@@ -49,7 +49,7 @@ public class Cliente {
     public boolean response(String mensagem) throws myException {
         String[] str = mySplit(mensagem);
         char codigo = str[0].charAt(0);
-        //String print = str[2];
+        
         boolean resposta = false;
         switch (codigo) {
             case '1':
@@ -62,10 +62,11 @@ public class Cliente {
                 resposta = clienteReservarServidor(str[1]);
                 break;
             case '4':
-                resposta = clienteDepositar(str[1]);
+                String print = str[2];
+                resposta = clienteConsultarConta(print);
                 break;
             case '5':
-                resposta = clienteConsultarConta(str[1]);
+                resposta = clienteDepositar(str[1]);
                 break;
             case '6':
                 resposta = clienteListarServidores(str[1]);
@@ -183,7 +184,7 @@ public class Cliente {
     
     public boolean logout(String username) throws myException {
         String sResposta = "";
-        out.println(9 + "," + username);
+        out.println(8 + "," + username);
         try {
             sResposta = in.readLine();
         } catch (IOException ex) {
@@ -196,19 +197,12 @@ public class Cliente {
     
     public boolean clienteConsultarConta(String mensagem) throws myException{
      boolean resposta = false;
-        switch (mensagem) {
-            case "ok":
-                resposta = true;
-                //out.print(mensagem);
-                break;
-            case "Utilizador não existe!":
-                throw new myException(mensagem);
-            case "Não tem valores em dívida":
-                resposta = true;
-                //out.print(mensagem);
-                break;
-            default:
-                throw new myException("Não foi possível efectuar a operação. Tente Novamente");
+        if (!"X".equals(mensagem)){
+            resposta = true;
+            System.out.print(mensagem.replace('#','\n'));
+        }
+        else {
+            throw new myException("\nNão foi possível obter resposta do servidor. Tente novamente");
         }
         return resposta;   
     }
@@ -216,7 +210,7 @@ public class Cliente {
     
     public String[] consultarConta(String username) throws myException{
         String sResposta = "";
-        out.println(5 + "," + username);
+        out.println(4 + "," + username);
         try{
             sResposta = in.readLine();
         }
@@ -235,7 +229,7 @@ public class Cliente {
     public String[] depositar(double valor, String username) throws IOException, myException{
         
         String sResposta = "";
-        out.println(4 + "," + valor + "," + username);
+        out.println(5 + "," + valor + "," + username);
         try{
             sResposta = in.readLine();
         }
@@ -260,7 +254,8 @@ public class Cliente {
                 resposta = true;
                 break;
             case "User Não Existe":
-                throw new myException(mensagem);
+                resposta = false;
+                break;
             default:
                 throw new myException("Não foi possível efectuar a operação. Tente Novamente");
         }

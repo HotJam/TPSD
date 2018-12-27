@@ -403,6 +403,7 @@ public class BD extends HashMap<String, Utilizador> implements Serializable {
     }
     
     
+    
   /*  public static HashMap<String, ServidorLeilão> getAuctions(){
         HashMap<String, ServidorLeilão> aux = new HashMap<String,ServidorLeilão>();
         BD.laux.lock();

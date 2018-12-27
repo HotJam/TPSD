@@ -66,12 +66,15 @@ public class CloudServerThread extends Thread{
             case '4':
                 //utilizador consulta a sua conta e dividas
                 consultarConta(msg);
+                break;
             case '5':
                 //utilizador deposita saldo na sua conta
                 depositar(msg);
+                break;
             case '6':
                 //utilizador lista servidores
                 listarServidores();
+                break;
             case '9':
                 //logout
                 logout(msg);
@@ -102,7 +105,7 @@ public class CloudServerThread extends Thread{
         } else if (bd.isLoggedin(user, pass)) {
             cs.sendMessage("1,utilizador já está autenticado!!");
         } else if (bd.login(user, pass)) {
-            cloud.enqueueUser(bd.get(user));
+            cloud.enqueueUser(new Utilizador(bd.get(user)));
             cs.sendMessage("1,ok");
         } else {
             cs.sendMessage("1,a password está incorreta!");
@@ -128,17 +131,17 @@ public class CloudServerThread extends Thread{
     
     private void depositar(String[] msg){
         //PROTOCOLO:
-        //4,saldo,username
+        //5,saldo,username
         double valor = Double.parseDouble(msg[1]);
         String username = msg[2];
         
         boolean cond = cloud.depositar(valor, username);
         
         if(cond){
-            cs.sendMessage("4,ok");
+            cs.sendMessage("5,ok");
         }
         else {
-            cs.sendMessage("4,User Não Existe");
+            cs.sendMessage("5,User Não Existe");
         }
         
     }
@@ -188,11 +191,9 @@ public class CloudServerThread extends Thread{
         String condition = cloud.consultarConta(username);
         
         if(condition == "false"){
-            cs.sendMessage("4, ,Utilizador não existe!");
+            cs.sendMessage("4,Utilizador não existe!,X");
         }
-        else if (condition == "Não tem valores em dívida"){
-            cs.sendMessage("4, ,Não tem valores em dívida");
-        }
+        
         else{
             cs.sendMessage("4,ok," + condition);
         }
@@ -201,11 +202,12 @@ public class CloudServerThread extends Thread{
     
     private void logout(String[] msg) {
         //PROTOCOLO:
-        //9,user
+        //8,user
         String user = msg[1];
+        //Utilizador u = null;
         if(bd.logout(user)){
-            cloud.dequeueUser(cloud.getLoogedUsers().get(user));
-            cs.sendMessage("9,ok");
+            cloud.enqueueUser(bd.get(user));
+            cs.sendMessage("8,ok");
         }
         else{
             cs.sendMessage("KO");

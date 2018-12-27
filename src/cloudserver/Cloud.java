@@ -81,8 +81,8 @@ public class Cloud implements Serializable{
         if(condition1 && condition2){
             try{
                 v = getServer(servername);
-                if(v.getIsAvailable() && (v.getPreco() <= u.getSaldo())){
-                    u = Cloud.utilizadoresQueue.get(username);                    
+                u = Cloud.utilizadoresQueue.get(username);
+                if(v.getIsAvailable() && (v.getPreco() <= u.getSaldo())){     
                     codigo = BD.incNrReserva();
                     v.adicionarUser();
                     v.setAvailability(false);
@@ -107,17 +107,19 @@ public class Cloud implements Serializable{
         }
         else {
             try {
-                if(condition2 && (v.getPreco() <= u.getSaldo())){
+                if(condition2){
                         v = BD.getServidores().get(servername);   
                         u = Cloud.utilizadoresQueue.get(username);
-                        codigo = BD.incNrReserva();
-                        v.adicionarUser();
-                        v.setAvailability(false);
-                        u.getReservas().put(codigo, v.clone());
-                        custo = v.getPreco();
-                        u.levantar(custo);
-                        Cloud.reservas.put(codigo, v.clone());
-                        r=true;
+                        if((v.getPreco() <= u.getSaldo())){
+                            codigo = BD.incNrReserva();
+                            v.adicionarUser();
+                            v.setAvailability(false);
+                            u.getReservas().put(codigo, v.clone());
+                            custo = v.getPreco();
+                            u.levantar(custo);
+                            Cloud.reservas.put(codigo, v.clone());
+                            r=true;
+                        }
                 }
                 else return false;
                 
@@ -147,13 +149,9 @@ public class Cloud implements Serializable{
             return "false";
         }
         else {
-            if(!u.getReservas().isEmpty()){
-                return u.toString();
-            }
-            else 
-                return "Não tem valores em dívida";
+            return u.toString().replace('\n','#')+"#";
         }
-        
+                    
     }    
     
     
@@ -161,7 +159,7 @@ public class Cloud implements Serializable{
         return Cloud.reservas;
     }
     
-    public HashMap<String, Utilizador> getLoogedUsers(){
+    public HashMap<String, Utilizador> getUsers(){
         return Cloud.utilizadoresQueue;
     }
     
@@ -192,8 +190,8 @@ public class Cloud implements Serializable{
             u = Cloud.utilizadoresQueue.get(username);
             u.depositar(valor);
             r=true;
-        }
-        return false;
+        } 
+        return r;
     }
     
     

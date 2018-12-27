@@ -28,7 +28,7 @@ public class Interface implements Serializable{
 
     protected void start() throws myException, InterruptedException, IOException {
         carregarMenus();
-
+        boolean r = false;
         do {
             menuLogin.executa();
             switch (menuLogin.getOpcao()) {
@@ -40,6 +40,8 @@ public class Interface implements Serializable{
                     break;
             }
         } while (menuLogin.getOpcao() != 0);
+        r = c.logout(user);
+        start();
     }
     
     
@@ -58,15 +60,21 @@ public class Interface implements Serializable{
                     case 3:
                         freeServer();
                         break;
-                   
+                    case 4:
+                        consultAccount();
+                        break;
+                    case 5:
+                        depositar();
+                        break;
                 }
             } catch (myException s) {
                 System.err.println(s.getMessage());
                 s.printStackTrace();
             }
         } while (menuMain.getOpcao() != 0);
-        c.logout(user);
+        
         start();
+        
     }
     
     
@@ -124,20 +132,20 @@ public class Interface implements Serializable{
                 case 2:
                     listarServidores();
                     break;
-                case 3:
-                    consultAccount();
-                    break;
+                
             }
         } while (menuLogin.getOpcao() != 0);
+        
+        start();
     }
     
     protected void carregarMenus() {
 
         String[] menuLogReg = {"Login", "Registar"};
 
-        String[] menuUtilizador = {"Depositar","Listar Servidores", "Consultar Conta"};
+        String[] menuUtilizador = {"Depositar","Listar Servidores"};
         
-        String[] main = {"Reservar Servidor", "Listar Servidores Leilão", "Libertar Servidor", "Consultar Dívidas"};
+        String[] main = {"Reservar Servidor", "Listar Servidores Leilão", "Libertar Servidor", "Consultar Conta", "Depositar"};
         
         String[] menuL = {"Licitar Servidor"};
         
@@ -223,13 +231,14 @@ public class Interface implements Serializable{
        
        try{
             resposta = c.consultarConta(user); 
-            sleep(2000);
-
             if (resposta == null){
                 System.err.print("Não foi possível fazer a operação! Tente novamente");
                 menuPrincipal();
             }
-            else menuU();
+            else{
+                
+                menuPrincipal();
+            }
             
        }
        catch (InterruptedException | myException e){
@@ -259,6 +268,10 @@ public class Interface implements Serializable{
                 System.out.print("_______________________________\n");
                 menuU();
             }
+            else{
+                System.err.print("Não foi possível efetuar operação. Tente novamente");
+                menuU();
+            }
                        
         }
         catch (IOException | myException | InterruptedException e){
@@ -270,10 +283,15 @@ public class Interface implements Serializable{
     protected void listarServidores() throws myException, InterruptedException, IOException{
         
         String[] msg = {" "}; 
-        
-        msg = c.listarServidoresCliente();
-        
-        menuPrincipal();
+        try{
+            msg = c.listarServidoresCliente();
+
+            menuPrincipal();
+        }
+        catch (myException | InterruptedException | IOException e){
+            
+            e.printStackTrace();
+        }
     }
     
     protected void auctionServer() throws myException{
