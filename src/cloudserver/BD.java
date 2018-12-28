@@ -108,6 +108,7 @@ public class BD extends HashMap<String, Utilizador> implements Serializable {
         }
         l.unlock();
         return flag;
+        
     }
 
     public boolean logout(String username){
