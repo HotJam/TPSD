@@ -7,10 +7,15 @@ package cloudserver;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.Date;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -25,12 +30,20 @@ public class Cloud implements Serializable{
     private static ReentrantLock aux;
     private Condition serverIsBusy;
     
+    private HashMap<Long, Long> timestampsReservas;         //codigo de reserva, tempo milisegundos
+    LocalDate date;
+    LocalDateTime timeI;
+    LocalDateTime timeF;
+    Chronometer ch; 
+    
     public Cloud() {
         //this.cntreservas = 0;
         Cloud.reservas = new HashMap<>();
         Cloud.utilizadoresQueue = new HashMap<>();
+        this.timestampsReservas = new HashMap<>();
         l = new ReentrantLock();
         this.serverIsBusy = l.newCondition();
+        this.ch = new Chronometer();
     }
 
     public ReentrantLock getLock() {
@@ -69,6 +82,8 @@ public class Cloud implements Serializable{
         double custo = 0;    
         long codigo = 0;
         
+        Date date = new Date();
+        
         String servername = " ";
         for(Servidor s: BD.getServidores().values()){
             if (s.getID() == id){
@@ -88,8 +103,8 @@ public class Cloud implements Serializable{
                     v.adicionarUser();
                     v.setAvailability(false);
                     u.getReservas().put(codigo, v.clone());
-                    custo = v.getPreco();
-                    u.levantar(custo);
+                    long timeI = ch.start();
+                    //this.timestampsReservas.put(codigo, timeI);
                     r=true;
                 }
                 else {
@@ -116,9 +131,9 @@ public class Cloud implements Serializable{
                             v.adicionarUser();
                             v.setAvailability(false);
                             u.getReservas().put(codigo, v.clone());
-                            custo = v.getPreco();
-                            u.levantar(custo);
                             Cloud.reservas.put(codigo, v.clone());
+                            long timeI = ch.start();
+                            //this.timestampsReservas.put(codigo, timeI);
                             r=true;
                         }
                 }
@@ -141,7 +156,7 @@ public class Cloud implements Serializable{
         Servidor v = null;
         Utilizador u = null;
         boolean r = false;
-                    
+              
         boolean condition1 = Cloud.reservas.containsKey(reserva);
         boolean condition2 = Cloud.utilizadoresQueue.containsKey(username);
         
@@ -155,6 +170,11 @@ public class Cloud implements Serializable{
                 
                 u.removeReserva(reserva);
                 Cloud.reservas.remove(reserva);
+                
+                long timeF = ch.stop();
+                double tempo = ch.getHours();
+                double custo = (v.getPreco() * tempo);
+                u.levantar(custo);
                 r=true;
             }
             catch (ServerIsEmptyException sif){

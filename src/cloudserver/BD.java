@@ -55,8 +55,8 @@ public class BD extends HashMap<String, Utilizador> implements Serializable {
         BD.laux = new ReentrantLock();
         
         for(int i=0; i<20; i++){
-            servername = "s" + i + "." + generate(3);
-            price = getRandomDoubleBetweenRange(5, 200);
+            servername = "s" + i + "." + generate(5);
+            price = getRandomDoubleBetweenRange(0.75, 20);
             BD.serverList.put(servername, new Servidor(i, servername, round(price, 2)));
         }
         
