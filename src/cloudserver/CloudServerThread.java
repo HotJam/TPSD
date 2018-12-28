@@ -81,7 +81,7 @@ public class CloudServerThread extends Thread{
                 //utilizador liberta a reserva de um servidor
                 libertarServidor(msg);
                 break;
-            case '9':
+            case '8':
                 //logout
                 logout(msg);
                 break;

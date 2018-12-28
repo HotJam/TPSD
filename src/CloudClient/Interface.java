@@ -40,8 +40,10 @@ public class Interface implements Serializable{
                     break;
             }
         } while (menuLogin.getOpcao() != 0);
-        r = c.logout(user);
-        start();
+        /*if(user!=null) {
+            r = c.logout(user);
+        }*/
+        //start();
     }
     
     
@@ -132,11 +134,13 @@ public class Interface implements Serializable{
                 case 2:
                     listarServidores();
                     break;
-                
+                case 0:
+                    logout();
+                    break;
             }
         } while (menuLogin.getOpcao() != 0);
         
-        start();
+        //start();
     }
     
     protected void carregarMenus() {
@@ -320,5 +324,16 @@ public class Interface implements Serializable{
     protected void auctionServer() throws myException{
         
     }
-   
+
+    protected void logout(){
+
+        String[] msg = {" "};
+        try{
+            c.logout(user);
+        }
+        catch (myException e){
+
+            e.printStackTrace();
+        }
+    }
 }
