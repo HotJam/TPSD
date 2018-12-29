@@ -72,15 +72,15 @@ public class Utilizador implements Serializable {
         return this.saldo;
     }
     
-    public void login(){
+    public synchronized void login(){
         this.login = true;
     }
     
-    public void logout(){
+    public synchronized void logout(){
         this.login = false;
     }
     
-    public HashMap<Long, Servidor> getReservas(){
+    public synchronized HashMap<Long, Servidor> getReservas(){
         return this.reservas;
     }
     

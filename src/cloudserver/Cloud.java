@@ -232,11 +232,10 @@ public class Cloud implements Serializable{
         l.unlock();
     }
     
-    public boolean dequeueUser(Utilizador p){
+    public void dequeueUser(Utilizador p){
         l.lock();
-        boolean aux = Cloud.utilizadoresQueue.remove(p.getUser(), p);
+        Cloud.utilizadoresQueue.remove(p.getUser(), p);
         l.unlock();
-        return aux;
     }
     
     //funcionalidades da cloud..

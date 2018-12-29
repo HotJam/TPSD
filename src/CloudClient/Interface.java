@@ -38,10 +38,11 @@ public class Interface implements Serializable{
                 case 2:
                     registar();
                     break;
+               
             }
         } while (menuLogin.getOpcao() != 0);
-        r = c.logout(user);
-        start();
+        logout();
+        c.close();
     }
     
     
@@ -72,9 +73,7 @@ public class Interface implements Serializable{
                 s.printStackTrace();
             }
         } while (menuMain.getOpcao() != 0);
-        
         start();
-        
     }
     
     
@@ -94,10 +93,26 @@ public class Interface implements Serializable{
         }
         if (login) {
             System.out.println("\n Login realizado com sucesso!");
-            menuU();
+            menuPrincipal();
         }
     }
-
+     
+    protected void logout() throws myException, IOException, InterruptedException{
+        boolean logout = false;
+        try{
+            System.out.print("\nDesconectando..");
+            sleep(1000);
+            logout = c.logout(user);
+        }
+        catch (myException e){
+            System.err.println(e.getMessage());
+        }
+        
+        if(logout){
+            System.out.println("\n Logout efetuado com sucesso!");
+            c.close();
+        }
+    }
     
 
     protected void registar() throws myException, InterruptedException, IOException {
@@ -141,11 +156,17 @@ public class Interface implements Serializable{
     
     protected void carregarMenus() {
 
-        String[] menuLogReg = {"Login", "Registar"};
+        String[] menuLogReg = { "Login", 
+                                "Registar"};
 
-        String[] menuUtilizador = {"Depositar","Listar Servidores"};
+        String[] menuUtilizador = { "Depositar",
+                                    "Listar Servidores"};
         
-        String[] main = {"Reservar Servidor", "Listar Servidores Leilão", "Libertar Servidor", "Consultar Conta", "Depositar"};
+        String[] main = {   "Reservar Servidor", 
+                            "Listar Servidores Leilão", 
+                            "Libertar Servidor", 
+                            "Consultar Conta", 
+                            "Depositar"};
         
         String[] menuL = {"Licitar Servidor"};
         

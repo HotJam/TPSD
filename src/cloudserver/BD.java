@@ -111,7 +111,7 @@ public class BD extends HashMap<String, Utilizador> implements Serializable {
         
     }
 
-    public boolean logout(String username){
+    public boolean logout(String username) throws IOException{
         l.lock();
         boolean res = true;
         if(super.containsKey(username)){
@@ -163,6 +163,12 @@ public class BD extends HashMap<String, Utilizador> implements Serializable {
         out.writeObject(this);
         out.flush();
         out.close();
+    }
+    
+    private void addToSample(String username, String pass) throws IOException{
+        Utilizador u = new Utilizador(username, pass);
+        this.put(username, u);
+        this.save(bdFilepath);
     }
 
     public void loadSample() throws IOException {
@@ -403,6 +409,12 @@ public class BD extends HashMap<String, Utilizador> implements Serializable {
         return aux;
     }
     
+    public void gravaObj(String fich) throws IOException {
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fich));
+        oos.writeObject(this);
+        oos.flush();
+        oos.close();
+    }
     
     
   /*  public static HashMap<String, ServidorLeilão> getAuctions(){

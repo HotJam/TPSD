@@ -81,7 +81,7 @@ public class CloudServerThread extends Thread{
                 //utilizador liberta a reserva de um servidor
                 libertarServidor(msg);
                 break;
-            case '9':
+            case '8':
                 //logout
                 logout(msg);
                 break;
@@ -220,13 +220,13 @@ public class CloudServerThread extends Thread{
     }
     
     
-    private void logout(String[] msg) {
+    private void logout(String[] msg) throws IOException {
         //PROTOCOLO:
         //8,user
         String user = msg[1];
         //Utilizador u = null;
-        if(bd.logout(user)){
-            cloud.enqueueUser(bd.get(user));
+        if(bd.containsKey(user)){
+            bd.get(user).logout();
             cs.sendMessage("8,ok");
         }
         else{

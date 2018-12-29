@@ -37,6 +37,7 @@ public class Cliente {
         in.close();
         out.close();
         socketCliente.close();
+        System.exit(0);
     }
     
     private String[] mySplit(String mensagem) {
@@ -196,6 +197,7 @@ public class Cliente {
             boolean flag = response(sResposta);
             return flag;
         }
+        
     }    
     
     public boolean clienteConsultarConta(String mensagem) throws myException{
